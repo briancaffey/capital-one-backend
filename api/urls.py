@@ -8,6 +8,6 @@ from .views import (
 )
 
 urlpatterns = [
-    url(r'^(?P<id>\d+)/$', views.account_id, name="account_id"),
-    url(r'^v1/(?P<pk>\d+)/$', AccountIDDetailAPIView.as_view(), name='detail'),
+    url(r'^(?P<account_id>\d+)/$', views.account_id, name="account_id"),
+    url(r'^v1/(?P<account_id>\d+)/$', AccountIDDetailAPIView.as_view(), name='detail'),
 ]
