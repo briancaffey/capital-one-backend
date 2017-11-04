@@ -1,0 +1,35 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ALLOWED_HOSTS	../settings.py	/^ALLOWED_HOSTS = []$/;"	kind:variable	line:28
+AUTH_PASSWORD_VALIDATORS	../settings.py	/^AUTH_PASSWORD_VALIDATORS = [$/;"	kind:variable	line:87
+BASE_DIR	../settings.py	/^BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))$/;"	kind:variable	line:16
+DATABASES	../settings.py	/^DATABASES = {$/;"	kind:variable	line:76
+DEBUG	../settings.py	/^DEBUG = True$/;"	kind:variable	line:26
+INSTALLED_APPS	../settings.py	/^INSTALLED_APPS = [$/;"	kind:variable	line:33
+LANGUAGE_CODE	../settings.py	/^LANGUAGE_CODE = 'en-us'$/;"	kind:variable	line:106
+MIDDLEWARE	../settings.py	/^MIDDLEWARE = [$/;"	kind:variable	line:42
+ROOT_URLCONF	../settings.py	/^ROOT_URLCONF = 'capitalone.urls'$/;"	kind:variable	line:52
+SECRET_KEY	../settings.py	/^SECRET_KEY = '!23@8l7b7dvjxl96#6)d9dm!$%&zn2f5w896s#5%hn^+fdk++2'$/;"	kind:variable	line:23
+STATIC_URL	../settings.py	/^STATIC_URL = '\/static\/'$/;"	kind:variable	line:120
+TEMPLATES	../settings.py	/^TEMPLATES = [$/;"	kind:variable	line:54
+TIME_ZONE	../settings.py	/^TIME_ZONE = 'UTC'$/;"	kind:variable	line:108
+USE_I18N	../settings.py	/^USE_I18N = True$/;"	kind:variable	line:110
+USE_L10N	../settings.py	/^USE_L10N = True$/;"	kind:variable	line:112
+USE_TZ	../settings.py	/^USE_TZ = True$/;"	kind:variable	line:114
+WSGI_APPLICATION	../settings.py	/^WSGI_APPLICATION = 'capitalone.wsgi.application'$/;"	kind:variable	line:70
+__init__.py	../__init__.py	1;"	kind:file	line:1
+__init__.py	../settings/__init__.py	1;"	kind:file	line:1
+admin	../urls.py	/^from django.contrib import admin$/;"	kind:namespace	line:17
+application	../wsgi.py	/^application = get_wsgi_application()$/;"	kind:variable	line:16
+get_wsgi_application	../wsgi.py	/^from django.core.wsgi import get_wsgi_application$/;"	kind:namespace	line:12
+os	../settings.py	/^import os$/;"	kind:namespace	line:13
+os	../wsgi.py	/^import os$/;"	kind:namespace	line:10
+settings.py	../settings.py	1;"	kind:file	line:1
+url	../urls.py	/^from django.conf.urls import url$/;"	kind:namespace	line:16
+urlpatterns	../urls.py	/^urlpatterns = [$/;"	kind:variable	line:19
+urls.py	../urls.py	1;"	kind:file	line:1
+wsgi.py	../wsgi.py	1;"	kind:file	line:1
