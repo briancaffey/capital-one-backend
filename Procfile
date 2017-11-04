@@ -1,1 +1,1 @@
-web: gunicorn teamcontingency.wsgi --log-file -
+web: gunicorn capitalone.wsgi --log-file -
