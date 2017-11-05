@@ -17,6 +17,15 @@ from rest_framework.generics import (
 from django.http import JsonResponse
 
 
+#mongodb
+import pymongo
+mongo_uri = "mongodb://contingency:qwer1234@cluster0-shard-00-00-xisxs.mongodb.net:27017,cluster0-shard-00-01-xisxs.mongodb.net:27017,cluster0-shard-00-02-xisxs.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
+client = pymongo.MongoClient(mongo_uri)
+
+db = client.test
+
+
+
 # import requests
 # import json
 
@@ -43,28 +52,34 @@ def map_to_get_customer(customer):
 
 
 def api_request(request, customer_id):
-    customer, account_id = get_customer_info(customer_id)
 
-    customer["account"] = utils.get_account_info(account_id).json()[0]
-    transaction_info = utils.get_transaction_info(customer_id=customer_id).json()[0]["customers"][0]
-    customer = {**customer, **transaction_info}
-
-    if customer.get("is_primary", False):
-        customers = utils.get_transaction_info(account_id=account_id).json()[0]["customers"]
-        
-        # filled_customers = []
-        with ThreadPoolExecutor() as executor:
-            filled_customers = executor.map(map_to_get_customer, customers, timeout=3)
-
-        authorized = customer["account"]["authorized_users"]
-
-        authorized = {user['customer_id']:{"credit_card_number":user['credit_card_number']} for user in authorized }
-        print(authorized)
-        final_customers = [{**cus, **authorized[cus["customer_id"]]} for cus in filled_customers if cus["customer_id"] != customer["customer_id"]]
     
-        customer["account"]["authorized_users"] = final_customers
 
-    return JsonResponse(customer, safe=False)
+    try: 
+        customer, account_id = get_customer_info(customer_id)
+
+        customer["account"] = utils.get_account_info(account_id).json()[0]
+        transaction_info = utils.get_transaction_info(customer_id=customer_id).json()[0]["customers"][0]
+        customer = {**customer, **transaction_info}
+
+        if customer.get("is_primary", False):
+            customers = utils.get_transaction_info(account_id=account_id).json()[0]["customers"]
+            
+            # filled_customers = []
+            with ThreadPoolExecutor() as executor:
+                filled_customers = executor.map(map_to_get_customer, customers, timeout=3)
+
+            authorized = customer["account"]["authorized_users"]
+
+            authorized = {user['customer_id']:{"credit_card_number":user['credit_card_number']} for user in authorized }
+            print(authorized)
+            final_customers = [{**cus, **authorized[cus["customer_id"]]} for cus in filled_customers if cus["customer_id"] != customer["customer_id"]]
+        
+            customer["account"]["authorized_users"] = final_customers
+
+        return JsonResponse(customer, safe=False)
+    except IndexError as err: 
+        return JsonResponse({"error":"User doesn't exist."}, safe=False)
 
 
 def list_transaction_info(request, account_id):
