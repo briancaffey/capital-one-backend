@@ -26,6 +26,7 @@ CCN = 'credit_card_number'
 CID = 'customer_id'
 
 env = os.environ.get("MONGODB_URI", 'mongodb://localhost:27017/')
+print("MONGO_URI", env)
 client = MongoClient(env)
 db = client.codefam
 users = db.users
