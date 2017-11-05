@@ -17,26 +17,26 @@ from rest_framework.generics import (
 from django.http import JsonResponse
 
 
+#example
+# db = client.test_database
+# collection = db.test_collection
+
+# >>> posts = db.posts
+# >>> post_id = posts.insert(post)
+# >>> post_id
+# ObjectId('...')
+
+
 #mongodb
-import pymongo
-mongo_uri = "mongodb://contingency:qwer1234@cluster0-shard-00-00-xisxs.mongodb.net:27017,cluster0-shard-00-01-xisxs.mongodb.net:27017,cluster0-shard-00-02-xisxs.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
-client = pymongo.MongoClient(mongo_uri)
-
-db = client.test
+# import pymongo
+# mongo_uri = "mongodb://contingency:qwer1234@cluster0-shard-00-00-xisxs.mongodb.net:27017,cluster0-shard-00-01-xisxs.mongodb.net:27017,cluster0-shard-00-02-xisxs.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
+# client = pymongo.MongoClient(mongo_uri)
 
 
+# db = client.customer_info_cache
+# print(db)
+# test1 = db.records.insert({'test':1})
 
-# import requests
-# import json
-
-# base_url = 'https://3hkaob4gkc.execute-api.us-east-1.amazonaws.com/prod/au-hackathon/'
-
-
-# def get_account_info(account_id):
-#     option = 'accounts'
-#     body = {"account_id": int(account_id)}
-#     info = requests.post(base_url + option, data=json.dumps(body))
-#     return info
 
 def account_id(request, account_id):
     account_id = AccountID.objects.get(account_id=account_id)
@@ -52,9 +52,6 @@ def map_to_get_customer(customer):
 
 
 def api_request(request, customer_id):
-
-    
-
     try: 
         customer, account_id = get_customer_info(customer_id)
 
@@ -76,6 +73,9 @@ def api_request(request, customer_id):
             final_customers = [{**cus, **authorized[cus["customer_id"]]} for cus in filled_customers if cus["customer_id"] != customer["customer_id"]]
         
             customer["account"]["authorized_users"] = final_customers
+            c = customer
+        record_id = records.insert({"customer":"testing!"})
+        print(record_id)
 
         return JsonResponse(customer, safe=False)
     except IndexError as err: 
