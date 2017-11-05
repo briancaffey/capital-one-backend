@@ -7,6 +7,12 @@ from django.http import JsonResponse
 
 from concurrent.futures import ThreadPoolExecutor
 
+import json
+import os
+
+from pymongo import MongoClient
+
+
 from api import utils
 # from . import utils
 from rest_framework.generics import (
@@ -19,25 +25,10 @@ from django.http import JsonResponse
 CCN = 'credit_card_number'
 CID = 'customer_id'
 
-#example
-# db = client.test_database
-# collection = db.test_collection
-
-# >>> posts = db.posts
-# >>> post_id = posts.insert(post)
-# >>> post_id
-# ObjectId('...')
-
-
-#mongodb
-# import pymongo
-# mongo_uri = "mongodb://contingency:qwer1234@cluster0-shard-00-00-xisxs.mongodb.net:27017,cluster0-shard-00-01-xisxs.mongodb.net:27017,cluster0-shard-00-02-xisxs.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
-# client = pymongo.MongoClient(mongo_uri)
-
-
-# db = client.customer_info_cache
-# print(db)
-# test1 = db.records.insert({'test':1})
+env = os.environ.get("MONGODB_URI", 'mongodb://localhost:27017/')
+client = MongoClient(env)
+db = client.codefam
+users = db.users
 
 
 def account_id(request, account_id):
@@ -56,7 +47,12 @@ def map_to_get_customer(customer):
 
 
 def api_request(request, customer_id):
-    try: 
+    try:
+        db_user = users.find_one({"customer_id": int(customer_id)})
+        if db_user:
+            db_user["_id"] = str(db_user["_id"])
+            return JsonResponse(db_user)
+
         customer, account_id = get_customer_info(customer_id)
         customer["account"] = utils.get_account_info(account_id).json()[0]
 
@@ -83,11 +79,11 @@ def api_request(request, customer_id):
                                if cus[CID] != customer[CID]]
 
             customer["account"]["authorized_users"] = final_customers
-            c = customer
-        record_id = records.insert({"customer":"testing!"})
-        print(record_id)
 
-        return JsonResponse(customer, safe=False)
+        response = JsonResponse(customer, safe=False)
+        record_id = users.insert(customer)
+
+        return response
 
     except IndexError as err:
         return JsonResponse({"error": "User doesn't exist."}, safe=False)
