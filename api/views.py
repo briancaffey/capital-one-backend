@@ -25,10 +25,10 @@ from django.http import JsonResponse
 CCN = 'credit_card_number'
 CID = 'customer_id'
 
-env = os.environ.get("MONGODB_URI", 'mongodb://localhost:27017/')
-print("MONGO_URI", env)
+env = os.environ.get("MONGODB_URI", 'mongodb://localhost:27017/codefam')
+db_name = env.split('/')[-1]
 client = MongoClient(env)
-db = client.codefam
+db = client[db_name]
 users = db.users
 
 
