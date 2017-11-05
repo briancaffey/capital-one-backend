@@ -5,5 +5,5 @@ Backend API service for Team Contingency: an app to help teens build smarter spe
 ### Endpoints
 
 ```
-http://teamcontingency.herokuapp.com/api/v1/user/:account_id
+http://teamcontingency.herokuapp.com/api/v1/users/:customer_id
 ```
