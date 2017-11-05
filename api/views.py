@@ -16,6 +16,8 @@ from rest_framework.generics import (
 
 from django.http import JsonResponse
 
+CCN = 'credit_card_number'
+CID = 'customer_id'
 
 #example
 # db = client.test_database
@@ -40,12 +42,14 @@ from django.http import JsonResponse
 
 def account_id(request, account_id):
     account_id = AccountID.objects.get(account_id=account_id)
-    return render(request, 'base.html', {'account_id':account_id})
+    return render(request, 'base.html', {'account_id': account_id})
+
 
 def get_customer_info(customer_id):
     data = utils.get_customer_info(customer_id=int(customer_id)).json()[0]
     return (data["customers"][0], data["account_id"])
-    
+
+
 def map_to_get_customer(customer):
     customer_info, account_id = get_customer_info(customer["customer_id"])
     return {**customer, **customer_info}
@@ -54,39 +58,46 @@ def map_to_get_customer(customer):
 def api_request(request, customer_id):
     try: 
         customer, account_id = get_customer_info(customer_id)
-
         customer["account"] = utils.get_account_info(account_id).json()[0]
-        transaction_info = utils.get_transaction_info(customer_id=customer_id).json()[0]["customers"][0]
+
+        rewards = utils.get_rewards_info(account_id).json()[0]["rewards"]
+        customer["account"]["rewards"] = rewards
+
+        transaction_info = utils.get_transaction_info(customer_id=customer_id)
+        transaction_info = transaction_info.json()[0]["customers"][0]
         customer = {**customer, **transaction_info}
 
         if customer.get("is_primary", False):
-            customers = utils.get_transaction_info(account_id=account_id).json()[0]["customers"]
-            
-            # filled_customers = []
+            customers = utils.get_transaction_info(account_id=account_id)
+            customers = customers.json()[0]["customers"]
+
             with ThreadPoolExecutor() as executor:
-                filled_customers = executor.map(map_to_get_customer, customers, timeout=3)
+                filled_customers = executor.map(map_to_get_customer, customers,
+                                                timeout=3)
 
             authorized = customer["account"]["authorized_users"]
+            authorized = {user[CID]: {CCN: user[CCN]} for user in authorized}
 
-            authorized = {user['customer_id']:{"credit_card_number":user['credit_card_number']} for user in authorized }
-            print(authorized)
-            final_customers = [{**cus, **authorized[cus["customer_id"]]} for cus in filled_customers if cus["customer_id"] != customer["customer_id"]]
-        
+            final_customers = [{**cus, **authorized[cus[CID]]}
+                               for cus in filled_customers
+                               if cus[CID] != customer[CID]]
+
             customer["account"]["authorized_users"] = final_customers
             c = customer
         record_id = records.insert({"customer":"testing!"})
         print(record_id)
 
         return JsonResponse(customer, safe=False)
-    except IndexError as err: 
-        return JsonResponse({"error":"User doesn't exist."}, safe=False)
+
+    except IndexError as err:
+        return JsonResponse({"error": "User doesn't exist."}, safe=False)
 
 
 def list_transaction_info(request, account_id):
     data = utils.get_transaction_info(int(account_id))
 
     context = {
-        'json':data
+        'json': data
     }
 
 
