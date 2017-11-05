@@ -8,8 +8,9 @@ from .views import (
 )
 
 urlpatterns = [
+    
     url(r'^(?P<account_id>\d+)/$', views.account_id, name="account_id"),
     url(r'^users/(?P<customer_id>\d+)/$', views.api_request, name="api_request"),
-    url(r'^v1/(?P<account_id>\d+)/$', AccountIDDetailAPIView.as_view(), name='detail'),
+    url(r'^update-transaction/', views.update_transaction, name="update_transaction")
     
 ]

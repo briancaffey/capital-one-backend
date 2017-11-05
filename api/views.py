@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import AccountID
 from .serializers import AccountIDSerializer
 from django.http import JsonResponse
+
+
 
 from concurrent.futures import ThreadPoolExecutor
 
 import json
 import os
+
+
+from django.views.decorators.csrf import csrf_exempt
 
 from pymongo import MongoClient
 
@@ -32,6 +37,7 @@ db = client[db_name]
 users = db.users
 
 
+
 def account_id(request, account_id):
     account_id = AccountID.objects.get(account_id=account_id)
     return render(request, 'base.html', {'account_id': account_id})
@@ -46,6 +52,30 @@ def map_to_get_customer(customer):
     customer_info, account_id = get_customer_info(customer["customer_id"])
     return {**customer, **customer_info}
 
+@csrf_exempt
+def update_transaction(request):
+    body = json.loads(request.body.decode())
+    
+    customer_id = int(body["customer_id"])
+    transaction_id = int(body["transaction_id"])
+    rating = body["rating"]
+    try:
+        transactions = users.find_one({"customer_id": int(customer_id)})["transactions"]
+
+        updated_transactions = []
+        for transaction in transactions:
+            
+            if transaction["transaction_id"] == transaction_id:
+                updated_transactions.append({**transaction, "rating":rating})
+            else: 
+                updated_transactions.append(transaction)
+        response = users.update_one({"customer_id": customer_id}, {"$set": {"transactions":updated_transactions}})
+
+        return JsonResponse({"status":f'{response.modified_count} item(s) were updated'})
+
+    except KeyError as error:
+        
+        return JsonResponse({"error":"failed to find record"})
 
 def api_request(request, customer_id):
     try:
